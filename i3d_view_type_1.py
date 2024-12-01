@@ -3,6 +3,13 @@ import matplotlib.pyplot as plt
 import math
 import pandas as pd
 
+
+# vt = 9880
+# kop = 1650
+# sur_co = np.array([15.32, 5.06])
+# tar_co = np.array([1650, 4510])
+# build_up = 1.5
+
 def type1():
   vt = int(input("Enter vertical depth (vt): "))
   kop = int(input("Enter kickoff point (kop): "))
