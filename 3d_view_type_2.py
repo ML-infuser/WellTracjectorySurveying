@@ -3,32 +3,32 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import math
 
-vt = 12000
-kop = 1500
-build_up = 2
-drop_off = 1.5
-eoc = 11000
-f_inc = 0.349066
-azi = 1.0472
-sur_co = np.array([50, 0])
-ht = 6000
-tar_co = np.array([sur_co[0]+ht*math.sin(azi),sur_co[1]+ht*math.cos(azi)])
+# vt = 12000
+# kop = 1500
+# build_up = 2
+# drop_off = 1.5
+# eoc = 11000
+# f_inc = 0.349066
+# azi = 1.0472
+# sur_co = np.array([50, 0])
+# ht = 6000
+# tar_co = np.array([sur_co[0]+ht*math.sin(azi),sur_co[1]+ht*math.cos(azi)])
 
-# vt = int(input("Enter vertical depth (vt): "))
-# kop = int(input("Enter kickoff point (kop): "))
-# build_up = float(input("Enter build-up rate (degrees per 100m): "))
-# drop_off = float(input("Enter drop-off rate (degrees per 100m): "))
-# eoc = int(input("Enter end of curve depth (eoc): "))
-# f_inc = float(input("Enter final inclination (in degrees): "))
-# f_inc = math.radians(f_inc)
+vt = int(input("Enter vertical depth (vt): "))
+kop = int(input("Enter kickoff point (kop): "))
+build_up = float(input("Enter build-up rate (degrees per 100m): "))
+drop_off = float(input("Enter drop-off rate (degrees per 100m): "))
+eoc = int(input("Enter end of curve depth (eoc): "))
+f_inc = float(input("Enter final inclination (in degrees): "))
+f_inc = math.radians(f_inc)
 
-# # # Surface coordinates input (two float values)
-# surface_x = float(input("Enter surface East-coordinate: "))
-# surface_y = float(input("Enter surface North-coordinate: "))
-# sur_co = np.array([surface_x, surface_y])
-# ht = int(input("Enter horizontal depth (ht): "))
-# azi = float(input("Enter azimuth in degrees "))
-# azi = math.radians(azi)
+# # Surface coordinates input (two float values)
+surface_x = float(input("Enter surface East-coordinate: "))
+surface_y = float(input("Enter surface North-coordinate: "))
+sur_co = np.array([surface_x, surface_y])
+ht = int(input("Enter horizontal depth (ht): "))
+azi = float(input("Enter azimuth in degrees "))
+azi = math.radians(azi)
 
 
 r1 = 18000/(3.14*build_up)
