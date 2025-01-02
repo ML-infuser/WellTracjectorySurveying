@@ -161,4 +161,4 @@ df = pd.DataFrame({'e': e,'n': n,  'd':d})
 csv_file_path = 'type_2.csv'
 df.to_csv(csv_file_path, index=False)  
 
-plt.show()
+# plt.show()
