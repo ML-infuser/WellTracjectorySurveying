@@ -26,14 +26,12 @@ def find_intersection_zones(points1, points2, kop1, kop2, shared_surface, thresh
     current_zone = None
     tree2 = KDTree(points2)
     
-    # Determine start index for collision checking
     start_idx = 0 if not shared_surface else max(kop1, kop2)
     
     for i in range(start_idx, len(points1)):
         point = points1[i]
         distances, indices = tree2.query(point, k=1)
         
-        # Only consider points after kickoff for the second well if shared surface
         if shared_surface and indices < kop2:
             continue
             
@@ -41,7 +39,6 @@ def find_intersection_zones(points1, points2, kop1, kop2, shared_surface, thresh
             close_point = points2[indices]
             
             if current_zone is None:
-                # Start new zone
                 current_zone = {
                     'well1_start': point,
                     'well2_start': close_point,
@@ -53,17 +50,14 @@ def find_intersection_zones(points1, points2, kop1, kop2, shared_surface, thresh
                     'well2_end_idx': indices
                 }
             else:
-                # Update end of current zone
                 current_zone['well1_end'] = point
                 current_zone['well2_end'] = close_point
                 current_zone['well1_end_idx'] = i
                 current_zone['well2_end_idx'] = indices
         elif current_zone is not None:
-            # End of zone reached
             zones.append(current_zone)
             current_zone = None
     
-    # Don't forget to add the last zone if it exists
     if current_zone is not None:
         zones.append(current_zone)
     
@@ -104,32 +98,32 @@ for val in types:
         df = pd.read_csv(f'type_{val}.csv')
         data[val] = df
         
-        # Find kickoff point (first point where trajectory deviates from vertical)
+        # Find kickoff point
         points = np.column_stack((df['e'], df['n'], df['d']))
         start_point = points[0]
         
-        # Find first point that deviates from vertical by checking horizontal distance
         for i, point in enumerate(points):
-            if calculate_distance(point[:2], start_point[:2]) > 1.0:  # 1 foot tolerance
+            if calculate_distance(point[:2], start_point[:2]) > 1.0:
                 kickoff_points[val] = i
                 break
         else:
             kickoff_points[val] = 0
         
-        # Plot the well trajectory
+        # Plot the well trajectory with 60% visibility
         ax.plot(df['e'], df['n'], df['d'], 
                 color=colors[val-1], 
                 label=f'Well Type {val}',
-                linewidth=2)
+                linewidth=2,
+                alpha=0.6)  # 60% visibility for trajectory lines
         
-        # Plot start, kickoff, and end points
+        # Plot only start and end points with smaller markers and 40% visibility
         ax.scatter(df['e'].iloc[0], df['n'].iloc[0], df['d'].iloc[0], 
-                  color=colors[val-1], marker=markers[val-1], s=100, label=f'Start Well {val}')
-        ax.scatter(df['e'].iloc[kickoff_points[val]], df['n'].iloc[kickoff_points[val]], 
-                  df['d'].iloc[kickoff_points[val]], 
-                  color='black', marker='x', s=100, label=f'KOP Well {val}')
+                  color=colors[val-1], marker=markers[val-1], s=50, 
+                  label=f'Start Well {val}',
+                  alpha=0.4)  # 40% visibility for markers
         ax.scatter(df['e'].iloc[-1], df['n'].iloc[-1], df['d'].iloc[-1], 
-                  color=colors[val-1], marker=markers[val-1], s=100)
+                  color=colors[val-1], marker=markers[val-1], s=50,
+                  alpha=0.4)  # 40% visibility for markers
         
     except FileNotFoundError:
         print(f"Warning: type_{val}.csv not found")
@@ -140,16 +134,14 @@ collision_threshold = 20  # feet
 intersection_zones_found = False
 
 for i, val1 in enumerate(types):
-    for val2 in types[i+1:]:  # Only compare each pair once
+    for val2 in types[i+1:]:
         points1 = np.column_stack((data[val1]['e'], data[val1]['n'], data[val1]['d']))
         points2 = np.column_stack((data[val2]['e'], data[val2]['n'], data[val2]['d']))
         
-        # Check if wells share surface location
         shared_surface = are_wells_shared_surface(points1[0], points2[0])
         
         print(f"\nAnalyzing intersection between Well {val1} and Well {val2}:")
         print(f"Wells {'share' if shared_surface else 'do not share'} surface location")
-        print(f"Kickoff points - Well {val1}: {kickoff_points[val1]}, Well {val2}: {kickoff_points[val2]}")
         
         zones = find_intersection_zones(points1, points2, 
                                      kickoff_points[val1], 
@@ -162,7 +154,6 @@ for i, val1 in enumerate(types):
             print(f"Found {len(zones)} intersection zone(s):")
             
             for idx, zone in enumerate(zones, 1):
-                # Calculate zone length
                 zone_length = calculate_distance(zone['well1_start'], zone['well1_end'])
                 
                 print(f"\nIntersection Zone {idx}:")
@@ -176,13 +167,15 @@ for i, val1 in enumerate(types):
                       f"N={zone['well2_end'][1]:.2f}, D={zone['well2_end'][2]:.2f}")
                 print(f"Zone length: {zone_length:.2f} feet")
                 
-                # Plot intersection zone markers
+                # Plot intersection zone markers with smaller size and 65% visibility
                 ax.scatter(zone['well1_start'][0], zone['well1_start'][1], zone['well1_start'][2],
-                          color='red', s=100, edgecolor='black', 
-                          marker='o', label='Intersection Start' if idx==1 else "")
+                          color='red', s=50, edgecolor='black', 
+                          marker='o', label='Intersection Start' if idx==1 else "",
+                          alpha=0.65)  # 65% visibility for intersection points
                 ax.scatter(zone['well1_end'][0], zone['well1_end'][1], zone['well1_end'][2],
-                          color='yellow', s=100, edgecolor='black', 
-                          marker='s', label='Intersection End' if idx==1 else "")
+                          color='yellow', s=50, edgecolor='black', 
+                          marker='s', label='Intersection End' if idx==1 else "",
+                          alpha=0.65)  # 65% visibility for intersection points
 
 if not intersection_zones_found:
     print("\nNo intersection zones detected between wells.")
