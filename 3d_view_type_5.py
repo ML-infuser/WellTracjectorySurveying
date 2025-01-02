@@ -7,8 +7,8 @@ import math
 # ht = 12000
 # kop = 2000
 # build_up = 2
-# final_incl = 30
-# initial_incl = 60
+# final_incl = 0.523599
+# initial_incl = 1.0472
 # azi = 1.0472
 # sur_co = np.array([15, 5])
 
@@ -68,7 +68,7 @@ for i in range(kop):
 
 
 # First Build Section
-for i in range(vc):
+for i in range(1,vc+1):
   d.append(ditr)
   ditr += 1
   x = math.asin(i/r1)
